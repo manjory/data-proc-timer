@@ -2,6 +2,7 @@ import csv
 import os
 import time
 from datetime import datetime
+from io import StringIO
 
 start = time.perf_counter()
 
@@ -14,23 +15,28 @@ print(f"File size: {file_size / 1024:.2f} KB")
 
 threshold_date=datetime(2022,1,1)
 
-with open(file_path, mode='r',newline='',encoding ='utf-8') as file:
-    reader=csv.DictReader(file)
-    header=reader.fieldnames
+with open(file_path, "rb") as file:
+    raw=file.read()
+text = raw.decode("utf-8",errors="replace")
+file= StringIO(text)
 
-    filtered_data=[]
 
-    for row in reader:
-        subs_date=row.get("Subscription Date","")
+reader=csv.DictReader(file)
+header=reader.fieldnames
 
-        try:
-            sub_date_obj = datetime.strptime(subs_date, "%Y-%m-%d")
-            # print(sub_date_obj)
+filtered_data=[]
 
-            if sub_date_obj>=threshold_date:
-                filtered_data.append(row)
-        except ValueError:
-            continue
+for row in reader:
+    subs_date=row.get("Subscription Date","")
+
+    try:
+        sub_date_obj = datetime.strptime(subs_date, "%Y-%m-%d")
+        # print(sub_date_obj)
+
+        if sub_date_obj>=threshold_date:
+            filtered_data.append(row)
+    except ValueError:
+        continue
 
 with open(output_script_path,mode='w',newline='',encoding='utf-8') as output_file:
     writer=csv.DictWriter(output_file,fieldnames=header)
