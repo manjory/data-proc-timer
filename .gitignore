@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
+
+# Data files (optional – decide what to track)
+*.csv
+*.parquet
+
+# Logs
+*.log
